@@ -123,13 +123,17 @@ def generate_image(sample,
         
         point_1 = (0,0)
         point_2 = (0,0)
+        unit = False
         if not from_real_film:
             #Insert unit symbol to screen, cover and guard.
             if label in ['screen', 'cover', 'guard']:
                 if random.uniform(0,1) > 0.5:
+                    unit = True
                     img, unit_lab, rotation, point_1, point_2 = add_unit_symbol_in_middle(img, scale, sample_units, manuever_units,
                                                     support_units, resizable, resizable_horizontal,
                                                     resizable_vertical, unit_sizes)
+
+                    
                 else:
                     img, rotation = augment(img, apply_rotation=True, apply_transformation=True, apply_boldness=True)
             else:
@@ -148,6 +152,9 @@ def generate_image(sample,
         except:
             continue
 
+        if unit:
+            locations_units.append(((point1,point2),(point1+img.shape[0],point2+img.shape[1])))
+            labels_units.append(unit_lab)
 
         labels.append(label)
         rotations.append(rotation)
@@ -188,6 +195,7 @@ def generate_image(sample,
                 point2_1, point1_1 = point_location(rotations[-1],img.shape,center,unit_symbol.shape)
                 #point1_1 = point1+y_dir
                 #point2_1 = point2+x_dir
+                
 
                 # We only place symbol if there is no overlap. If there is then unit symbol is not added.
                 if ((point1_1+unit_symbol.shape[0] < dim[0]) and (point2_1+unit_symbol.shape[1] < dim[1]) and (point1_1 >= 0) and (point2_1 >= 0)):
@@ -407,6 +415,7 @@ def main(
     
 
 def parse_opt():
+    subfolder = "train"
     parser = argparse.ArgumentParser()
     parser.add_argument('--dim_h', type=int, default = 3468, help='The dimension which is being used during generating, should be same in which the symbols samples are taken')
     parser.add_argument('--dim_w', type=int, default = 4624, help='The dimension which is being used during generating, should be same in which the symbols samples are taken')
@@ -421,10 +430,10 @@ def parse_opt():
     parser.add_argument('--real_symbols_clean_dir', type=str, default='data/real_clean_symbols', help='Directory in which the sample of tactical tasks cut from real films are')
     parser.add_argument('--unit_symbols_dir', type=str, default='data/unit_symbols', help='Directory in which the sample of unit symbols are')
     parser.add_argument('--extras_dir', type=str, default='data/extras', help='Directory in which the sample of extras is')
-    parser.add_argument('--save_images_dir', type=str, default='images/train', help='Directory where to store generated images')
-    parser.add_argument('--save_labels_dir', type=str, default='labels/train', help='Directory where to store labels')
-    parser.add_argument('--save_unit_labels_dir', type=str, default='unit_labels/train', help='Directory where to store labels')
-    parser.add_argument('--save_rotations_dir', type=str, default='rotations/train', help='Directory where to store rotations')
+    parser.add_argument('--save_images_dir', type=str, default=f'images/{subfolder}', help='Directory where to store generated images')
+    parser.add_argument('--save_labels_dir', type=str, default=f'labels/{subfolder}', help='Directory where to store labels')
+    parser.add_argument('--save_unit_labels_dir', type=str, default=f'unit_labels/{subfolder}', help='Directory where to store labels')
+    parser.add_argument('--save_rotations_dir', type=str, default=f'rotations/{subfolder}', help='Directory where to store rotations')
     parser.add_argument('--real_backgrounds_ratio', type=float, default = 0.0, help='Ratio of data with real backgrounds')
     parser.add_argument('--real_backgrounds_dir', type=str, default = "data/real_backgrounds", help='Directory in which the real data backgrounds are')
     parser.add_argument('--real_symbols_ratio', type=float, default = 0.0, help="Ratio of real symbols cut from film")

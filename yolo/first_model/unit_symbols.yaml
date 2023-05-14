@@ -1,0 +1,9 @@
+path: ../data
+train: images/train
+test: images/test
+val: images/val
+#Classes
+nc: 11 # replace classes count 
+#classes names
+#replace all class names list with your custom classes
+names: ['infantry', 'anti_tank', 'armour', 'recce', 'medic', 'signal', 'hq_unit', 'supply', 'artillery', 'mortar', 'air_defence']
