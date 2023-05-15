@@ -177,7 +177,19 @@ def generate_image(sample,
         if label not in ['screen', 'cover', 'guard']:
             if random.uniform(0, 1) > 0.2:
                 #Generate unit symbol
-                unit_symbol, unit_lab = generate_unit(sample_units,"maneuver",
+
+                #Decide on the label
+                rand = random.uniform(0, 1)
+                if rand < 0.45:
+                    label = 'maneuver'
+                elif rand < 0.9:
+                    label = 'support'
+                elif rand < 0.95:
+                    label = 'hq_unit'
+                else:
+                    label = 'supply'
+                
+                unit_symbol, unit_lab = generate_unit(sample_units,label,
                                                       manuever_units,support_units,
                                                       resizable,resizable_horizontal,
                                                       resizable_vertical,unit_sizes)
