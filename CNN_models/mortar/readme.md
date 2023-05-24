@@ -1,0 +1,1 @@
+Must be improved or trained longer. Currently confuses mortar and armour symbols.
