@@ -181,7 +181,9 @@ def add_unit_size(sample: Dict[str, List[np.ndarray]],
             template.shape[0]*0.01), int(template.shape[1]/2 - unit_size_img.shape[1]/2))
 
     # Place the task group symbol aboce unit size symbol
+    unit_tactical = False
     if random.uniform(0, 1) > 0.9 and (unit_size_label in ['company', 'battalion', 'regiment']):
+        unit_tactical = True
         unit_size_img22 = np.full(
             (int(unit_size_img2.shape[0]*1.05), unit_size_img2.shape[1]), 255)
         unit_size_img22[-unit_size_img2.shape[0]:, -
@@ -192,7 +194,7 @@ def add_unit_size(sample: Dict[str, List[np.ndarray]],
         unit_size_img22 = place_symbol(unit_size_img22, unit_size_img, int(
             unit_size_img2.shape[0]*0.01), int(unit_size_img22.shape[1]/2 - unit_size_img.shape[1]/2))
         unit_size_img2 = unit_size_img22
-    return unit_size_img2
+    return unit_size_img2, unit_tactical
 
 
 def generate_unit(sample: Dict[str, List[np.ndarray]],
@@ -207,7 +209,9 @@ def generate_unit(sample: Dict[str, List[np.ndarray]],
                                                         'supply',
                                                         'artillery',
                                                         'mortar',
-                                                        'air_defence'],
+                                                        'air_defence',
+                                                        'sniper',
+                                                        'gun_system'],
                   resizable: Optional[List[str]] = ['infantry',
                                                     'anti_tank',
                                                     'recce',
@@ -299,6 +303,9 @@ def generate_unit(sample: Dict[str, List[np.ndarray]],
 
     unit_size_img = get_random('size_' + image_lab, sample)
 
-    template = add_unit_size(sample, template, unit_size_img, unit_size_lab)
+    template, unit_tactical = add_unit_size(
+        sample, template, unit_size_img, unit_size_lab)
 
+    if unit_tactical:
+        composed_label += '__unit_tactical'
     return template.astype('float32'), composed_label
